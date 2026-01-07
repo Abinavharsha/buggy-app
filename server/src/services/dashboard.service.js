@@ -1,47 +1,18 @@
 import db from "../db/knex.js";
-import {
-  getDashboardSummary,
-  getRecentActivities,
-  getActivityStats
-} from "../services/dashboard.service.js";
-
-
-export async function getDashboard(req, res, next) {
-  try {
-    const userId = req.query.userId;
-
-    const summary = await getDashboardSummary(userId);
-    const activities = await getRecentActivities(userId);
-    const stats = await getActivityStats(userId);
-
-    res.json({
-      summary,
-      recentActivities: activities,
-      stats
-    });
-  } catch (err) {
-    next(err);
-  }
-}
 
 /**
  * Fetch dashboard summary counts
  */
 export async function getDashboardSummary(userId) {
-  // Fetch user activities (overfetching)
   const rows = await db("user_activities")
     .where({ user_id: userId });
 
   let completed = 0;
   let started = 0;
 
-  // JS-side aggregation
   for (const row of rows) {
-    if (row.status === "completed") {
-      completed++;
-    } else {
-      started++;
-    }
+    if (row.status === "completed") completed++;
+    else started++;
   }
 
   return {
@@ -55,7 +26,6 @@ export async function getDashboardSummary(userId) {
  * Fetch recent activities
  */
 export async function getRecentActivities(userId) {
-  // Fetch recent activity logs
   const logs = await db("activity_logs")
     .where({ user_id: userId })
     .orderBy("created_at", "desc")
@@ -64,7 +34,6 @@ export async function getRecentActivities(userId) {
   const results = [];
 
   for (const log of logs) {
-    // N+1 pattern: fetch activity for each log
     const activity = await db("activities")
       .where({ id: log.activity_id })
       .first();
@@ -73,7 +42,7 @@ export async function getRecentActivities(userId) {
       activityId: activity.id,
       title: activity.title,
       action: log.action,
-      metadata: log.metadata, // large JSON passed through
+      metadata: log.metadata,
       timestamp: log.created_at
     });
   }
@@ -85,14 +54,12 @@ export async function getRecentActivities(userId) {
  * Fetch activity stats grouped by type
  */
 export async function getActivityStats(userId) {
-  // Fetch all user activities
   const rows = await db("user_activities")
     .where({ user_id: userId });
 
   const stats = {};
 
   for (const row of rows) {
-    // Fetch activity type repeatedly
     const activity = await db("activities")
       .where({ id: row.activity_id })
       .first();
