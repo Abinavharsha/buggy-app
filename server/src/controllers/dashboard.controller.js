@@ -7,6 +7,7 @@ import {
 export async function getDashboard(req, res, next) {
   try {
     const userId = req.query.userId;
+    const start = Date.now();
 
     const summary = await getDashboardSummary(userId);
     const activities = await getRecentActivities(userId);
