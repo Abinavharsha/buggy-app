@@ -1,9 +1,8 @@
-import { Router } from "express";
+import express from "express";
+import { getDashboard } from "../controllers/dashboard.controller.js";
 
-const router = Router();
+const router = express.Router();
 
-router.get("/", (req, res) => {
-  res.json({ message: "Dashboard endpoint (placeholder)" });
-});
+router.get("/", getDashboard);
 
 export default router;
