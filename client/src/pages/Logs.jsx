@@ -12,9 +12,11 @@ export default function Logs() {
     <div>
       <h2>API Logs</h2>
 
-      {logs.map(log => (
-        <pre key={log.id}>{JSON.stringify(log, null, 2)}</pre>
-      ))}
+      {Array.isArray(logs) &&
+        logs.map(log => (
+          <div key={log.id}>{log.path}</div>
+        ))
+      } 
     </div>
   );
 }

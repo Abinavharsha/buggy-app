@@ -15,9 +15,11 @@ export default function Users() {
     <div>
       <h2>Users</h2>
 
-      {users.map(user => (
-        <UserRow key={user.id} user={user} />
-      ))}
+      {Array.isArray(users) &&
+        users.map(user => (
+          <div key={user.id}>{user.name}</div>
+        ))
+      }
 
       <Pagination page={page} onChange={setPage} />
     </div>
