@@ -4,6 +4,6 @@ import { getDashboardSummary } from "../services/dashboard.service.js";
 
 const router = express.Router();
 
-router.get("/", getDashboardSummary);
+router.get("/", getDashboard);
 
 export default router;
