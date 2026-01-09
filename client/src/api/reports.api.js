@@ -1,5 +1,7 @@
+import { API_BASE_URL } from "./config";
+
 export async function exportReport(from, to) {
-  let url = `/api/reports/export`;
+  let url = `${API_BASE_URL}/api/reports/export`;
 
   const params = [];
   if (from) params.push(`from=${from}`);
