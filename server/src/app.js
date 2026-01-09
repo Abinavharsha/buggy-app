@@ -10,11 +10,17 @@ import logsRoutes from "./routes/logs.routes.js";
 import apiLogger from "./middlewares/apiLogger.middleware.js";
 import errorMiddleware from "./middlewares/error.middleware.js";
 
+// import seedRoutes from "./routes/seed.routes.js";
+import { initDb } from "./db/initDb.js";
+
 const app = express();
 
 // Global middleware
 app.use(cors());
 app.use(express.json());
+
+// Populate DB
+initDb();
 
 // API logging middleware (baseline)
 app.use(apiLogger);

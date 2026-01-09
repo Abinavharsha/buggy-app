@@ -29,7 +29,7 @@ export async function getRecentActivities(userId) {
   const logs = await db("activity_logs")
     .where({ user_id: userId })
     .orderBy("created_at", "desc")
-    .limit(10);
+    .limit(50);
 
   const results = [];
 
