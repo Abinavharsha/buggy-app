@@ -7,9 +7,27 @@ export default function Dashboard() {
   const [data, setData] = useState(null);
 
   usePolling(async () => {
-    const res = await fetchDashboard(1);
-    setData(res.data);
-  }, 5000); // polling every 5s (intentional)
+    try {
+      const res = await fetchDashboard(1);
+
+      // Hard validation
+      if (
+        !res ||
+        typeof res !== "object" ||
+        !res.summary ||
+        !res.recentActivities ||
+        !res.stats
+      ) {
+        console.warn("[dashboard] invalid payload", res);
+        return; // DO NOT update state
+      }
+
+      setData(res);
+    } catch (err) {
+      console.error("[dashboard] fetch failed", err);
+    }
+  }, 5000);
+  // polling every 5s (intentional)
 
   if (!data) return <p>Loading...</p>;
 
