@@ -20,28 +20,36 @@ export default function Activities() {
     <div>
       <h1>Activities</h1>
 
-      <ul>
-        {activities.map(a => (
-          <li key={a.id}>
-            {a.title} - ({a.type}) - {a.participantCount} participants
-          </li>
+      <table border="1" cellPadding="8" cellSpacing="0">
+        <thead>
+          <tr>
+            <th align="left">Title</th>
+            <th align="left">Type</th>
+            <th align="right">Participants</th>
+          </tr>
+        </thead>
 
-        ))}
-      </ul>
+        <tbody>
+          {activities.map(a => (
+            <tr key={a.id}>
+              <td>{a.title}</td>
+              <td>{a.type}</td>
+              <td align="right">{a.participantCount}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
-      <button
-        disabled={page === 1}
-        onClick={() => setPage(p => p - 1)}
-      >
+
+      <button disabled={page === 1} onClick={() => setPage(p => p - 1)}>
         Prev
       </button>
 
-      <span> Page {page} of {totalPages} </span>
+      <span style={{ margin: "0 8px" }}>
+        Page {page} of {totalPages}
+      </span>
 
-      <button
-        disabled={page >= totalPages}
-        onClick={() => setPage(p => p + 1)}
-      >
+      <button disabled={page >= totalPages} onClick={() => setPage(p => p + 1)}>
         Next
       </button>
     </div>
