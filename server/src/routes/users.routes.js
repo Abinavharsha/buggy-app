@@ -1,13 +1,19 @@
 import { Router } from "express";
+import {
+  getUsersList,
+  getUser,
+  getUserActivityList
+} from "../controllers/users.controller.js";
 
 const router = Router();
 
-router.get("/", (req, res) => {
-  res.json({ message: "Users endpoint (placeholder)" });
-});
+// GET /api/users
+router.get("/", getUsersList);
 
-router.get("/:id", (req, res) => {
-  res.json({ message: "User detail endpoint (placeholder)" });
-});
+// GET /api/users/:id
+router.get("/:id", getUser);
+
+// GET /api/users/:id/activities
+router.get("/:id/activities", getUserActivityList);
 
 export default router;

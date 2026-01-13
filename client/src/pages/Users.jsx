@@ -1,27 +1,39 @@
 import { useEffect, useState } from "react";
 import { fetchUsers } from "../api/users.api.js";
-import UserRow from "../components/UserRow.jsx";
-import Pagination from "../components/Pagination.jsx";
 
 export default function Users() {
   const [users, setUsers] = useState([]);
-  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchUsers(page, 20).then(res => setUsers(res.data));
-  }, [page]);
+    fetchUsers(1, 20)
+      .then((res) => {
+        setUsers(res.data);
+      })
+      .catch((err) => {
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
-    <div>
-      <h2>Users</h2>
+    <div className="page">
+      <h1>Users</h1>
 
-      {Array.isArray(users) &&
-        users.map(user => (
-          <div key={user.id}>{user.name}</div>
-        ))
-      }
+      {loading && <p>Loading users...</p>}
 
-      <Pagination page={page} onChange={setPage} />
+      {!loading && users.length === 0 && (
+        <p>No users found.</p>
+      )}
+
+      {!loading && users.length > 0 && (
+        <ul>
+          {users.map((user) => (
+            <li key={user.id}>
+              {user.name || user.email || JSON.stringify(user)}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
