@@ -4,6 +4,7 @@ import cors from "cors";
 import usersRoutes from "./routes/users.routes.js";
 import activitiesRoutes from "./routes/activities.routes.js";
 import dashboardRoutes from "./routes/dashboard.routes.js";
+import reportsRoutes from "./routes/reports.routes.js";
 import logsRoutes from "./routes/logs.routes.js";
 
 import apiLogger from "./middlewares/apiLogger.middleware.js";
@@ -33,6 +34,7 @@ app.get("/health", (req, res) => {
 app.use("/api/users", usersRoutes);
 app.use("/api/activities", activitiesRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/reports", reportsRoutes);
 app.use("/api/logs", logsRoutes);
 
 // Error handler (must be last)
