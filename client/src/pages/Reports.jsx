@@ -1,20 +1,26 @@
-import { useState } from "react";
-import { exportReport } from "../api/reports.api.js";
+import { useEffect, useState } from "react";
+import { fetchActivitySummaryReport } from "../api/reports.api.js";
 
 export default function Reports() {
-  const [result, setResult] = useState(null);
+  const [data, setData] = useState([]);
 
-  async function handleExport() {
-    const res = await exportReport();
-    setResult(res.data);
-  }
+  useEffect(() => {
+    fetchActivitySummaryReport().then((res) => {
+      setData(res.data); // ❌ assumes res.data always exists
+    });
+  }, []);
 
   return (
-    <div>
-      <h2>Reports</h2>
-      <button onClick={handleExport}>Export</button>
+    <div className="page">
+      <h1>Reports</h1>
 
-      {result && <p>Exported {result.length} rows</p>}
+      <ul>
+        {data.map((row) => (
+          <li key={row.type}>
+            {row.type} → {row.count}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

@@ -27,7 +27,6 @@ import {
 export async function getDashboard(req, res, next) {
   try {
     const userId = req.query.userId;
-
     const start = Date.now();
 
     const t0 = Date.now();

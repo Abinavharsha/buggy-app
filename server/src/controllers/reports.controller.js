@@ -1,22 +1,12 @@
-import { exportActivitiesReport } from "../services/reports.service.js";
+import { getActivitySummaryReport } from "../services/reports.service.js";
 
-export async function exportReport(req, res, next) {
-  const start = Date.now();
+export async function getActivitySummary(req, res, next) {
 
   try {
-    const from = req.query.from;
-    const to = req.query.to;
-
-    const data = await exportActivitiesReport({ from, to });
-
-    const duration = Date.now() - start;
+    const data = await getActivitySummaryReport();
 
     res.status(200).json({
-      data,
-      meta: {
-        count: data.length,
-        responseTimeMs: duration
-      }
+      data
     });
   } catch (err) {
     next(err);

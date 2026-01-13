@@ -7,29 +7,59 @@ export default function Dashboard() {
   const [data, setData] = useState(null);
 
   usePolling(async () => {
-    const res = await fetchDashboard(1);
-    setData(res.data);
+    try {
+      const res = await fetchDashboard(1);
+
+      // Hard validation
+      if (
+        !res ||
+        typeof res !== "object" ||
+        !res.summary ||
+        !res.recentActivities ||
+        !res.stats
+      ) {
+        console.warn("[dashboard] invalid payload", res);
+        return;
+      }
+
+      setData(res);
+    } catch (err) {
+      console.error("[dashboard] fetch failed", err);
+    }
   }, 5000); // polling every 5s (intentional)
 
   if (!data) return <p>Loading...</p>;
 
   return (
-    <div>
+    <div style={{ padding: "24px" }}>
       <h2>Dashboard</h2>
 
-      <div>
+      {/* Stat cards */}
+      <div
+        style={{
+          display: "flex",
+          gap: "16px",
+          marginTop: "16px",
+          marginBottom: "24px"
+        }}
+      >
         <StatCard title="Total" value={data.summary.total} />
         <StatCard title="Completed" value={data.summary.completed} />
         <StatCard title="Started" value={data.summary.started} />
       </div>
 
-      <ul>
-        {data.recentActivities.map((a, i) => (
-          <li key={i}>
-            {a.title} - {a.action}
-          </li>
-        ))}
-      </ul>
+      {/* Recent activities */}
+      <div>
+        <h3>Recent Activity</h3>
+
+        <ul style={{ paddingLeft: "16px" }}>
+          {data.recentActivities.map((a, i) => (
+            <li key={i} style={{ marginBottom: "6px" }}>
+              <strong>{a.title}</strong> — {a.action}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }

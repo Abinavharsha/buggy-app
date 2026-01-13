@@ -1,9 +1,9 @@
 import { Router } from "express";
+import { getActivitySummary } from "../controllers/reports.controller.js";
 
 const router = Router();
 
-router.get("/export", (req, res) => {
-  res.json({ message: "Export report endpoint (placeholder)" });
-});
+// GET /api/reports/activity-summary
+router.get("/activity-summary", getActivitySummary);
 
 export default router;
