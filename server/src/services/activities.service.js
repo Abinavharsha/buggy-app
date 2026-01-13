@@ -76,3 +76,15 @@ export async function getActivityParticipants(activityId) {
 
   return results;
 }
+
+
+export async function countActivities({ type }) {
+  let query = db("activities");
+
+  if (type) {
+    query = query.where({ type });
+  }
+
+  const [{ count }] = await query.count("* as count");
+  return Number(count);
+}

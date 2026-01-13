@@ -1,21 +1,28 @@
 import {
   getUsers,
   getUserById,
+  countUsers,
   getUserActivities
 } from "../services/users.service.js";
 
 export async function getUsersList(req, res, next) {
-
   try {
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 20;
     const status = req.query.status;
 
-    const users = await getUsers({ page, limit, status });
+    const [users, total] = await Promise.all([
+      getUsers({ page, limit, status }),
+      countUsers({ status })
+    ]);
 
     res.status(200).json({
       data: users,
-      meta: { page, limit }
+      meta: {
+        page,
+        limit,
+        total
+      }
     });
   } catch (err) {
     next(err);

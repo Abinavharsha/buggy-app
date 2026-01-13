@@ -1,8 +1,5 @@
 import db from "./knex.js";
 
-// ─────────────────────────────────────────────
-// HELPERS
-// ─────────────────────────────────────────────
 function randomChoice(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
@@ -13,51 +10,8 @@ function randomDateWithinDays(days) {
   return new Date(past + Math.random() * (now - past));
 }
 
-// ─────────────────────────────────────────────
-// REALISTIC DATA SETS
-// ─────────────────────────────────────────────
-const USER_NAMES = [
-  "Aarav Sharma",
-  "Diya Patel",
-  "Rohan Mehta",
-  "Ananya Gupta",
-  "Kunal Verma",
-  "Sneha Iyer",
-  "Rahul Malhotra",
-  "Priya Nair",
-  "Arjun Singh",
-  "Neha Kapoor",
-  "Vikram Rao",
-  "Pooja Chawla",
-  "Aditya Joshi",
-  "Mehul Jain",
-  "Ishita Banerjee"
-];
-
-const ACTIVITY_CATALOG = [
-  { title: "Introduction to JavaScript", type: "lesson" },
-  { title: "Variables & Data Types Quiz", type: "quiz" },
-  { title: "Control Flow Basics", type: "lesson" },
-  { title: "Loops & Conditions Quiz", type: "quiz" },
-  { title: "Functions Explained", type: "lesson" },
-  { title: "Functions Assessment", type: "quiz" },
-  { title: "Asynchronous JavaScript", type: "lesson" },
-  { title: "Promises & Async/Await Quiz", type: "quiz" },
-  { title: "HTML Fundamentals", type: "lesson" },
-  { title: "HTML Basics Quiz", type: "quiz" },
-  { title: "CSS Layouts & Flexbox", type: "lesson" },
-  { title: "CSS Selectors Quiz", type: "quiz" },
-  { title: "Intro to Databases", type: "lesson" },
-  { title: "SQL Fundamentals Quiz", type: "quiz" },
-  { title: "REST API Concepts", type: "lesson" },
-  { title: "API Design Quiz", type: "quiz" },
-  { title: "Authentication & JWT", type: "lesson" },
-  { title: "Security Basics Quiz", type: "quiz" }
-];
-
-const LOG_ACTIONS = ["viewed", "started", "completed", "failed"];
-
 export async function seedHeavy() {
+  console.log("[seed] seeding realistic data...");
 
   // ─────────────────────────────────────────────
   // CLEAN TABLES
@@ -68,75 +22,64 @@ export async function seedHeavy() {
   await db("users").del();
 
   // ─────────────────────────────────────────────
-  // USERS
+  // USERS (realistic mix)
   // ─────────────────────────────────────────────
-  const users = USER_NAMES.map((name, index) => ({
-    id: index + 1,
-    name,
-    email: name.toLowerCase().replace(/ /g, ".") + "@example.com",
-    role: index === 0 ? "admin" : "student",
-    status: index % 6 === 0 ? "inactive" : "active",
-    preferences: JSON.stringify({
-      theme: index % 2 === 0 ? "dark" : "light",
-      notifications: index % 3 === 0
-    })
-  }));
+  const users = [];
+
+  for (let i = 1; i <= 15; i++) {
+    users.push({
+      id: i,
+      name: `User ${i}`,
+      email: `user${i}@example.com`,
+      role: i === 1 ? "admin" : "student",
+      status: i % 7 === 0 ? "inactive" : "active",
+      preferences:
+        i % 3 === 0
+          ? JSON.stringify({ theme: "dark" })
+          : JSON.stringify({ theme: "light", lang: "en" })
+    });
+  }
 
   await db("users").insert(users);
+  console.log("[seed] users:", users.length);
 
   // ─────────────────────────────────────────────
-  // ACTIVITIES
+  // ACTIVITIES (uneven importance)
   // ─────────────────────────────────────────────
   const activities = [];
 
-  let activityId = 1;
-  while (activities.length < 200) {
-    for (const item of ACTIVITY_CATALOG) {
-      if (activities.length >= 200) break;
-
-      activities.push({
-        id: activityId++,
-        title: item.title,
-        type: item.type
-      });
-    }
+  for (let i = 1; i <= 200; i++) {
+    activities.push({
+      id: i,
+      title: `Activity ${i}`,
+      type: i % 4 === 0 ? "lesson" : "quiz"
+    });
   }
 
   await db("activities").insert(activities);
+  console.log("[seed] activities:", activities.length);
 
   // ─────────────────────────────────────────────
-  // USER ACTIVITIES (REALISTIC DISTRIBUTION)
+  // USER ACTIVITIES (skewed participation)
   // ─────────────────────────────────────────────
-  const activeUsers = users.filter(u => u.status === "active");
   const userActivities = [];
 
   for (let i = 0; i < 1200; i++) {
-    const user = randomChoice(activeUsers);
+    const userId = randomChoice(
+      users.filter(u => u.status === "active").map(u => u.id)
+    );
 
-    // Popular beginner topics appear more often
-    const popularActivity =
+    const activityId =
       Math.random() < 0.6
-        ? randomChoice(activities.slice(0, 10))
-        : randomChoice(activities);
-
-    const status = randomChoice([
-      "started",
-      "completed",
-      "completed",
-      "started"
-    ]);
+        ? randomChoice([1, 2, 3, 4, 5]) // popular activities
+        : Math.floor(Math.random() * 200) + 1;
 
     userActivities.push({
-      user_id: user.id,
-      activity_id: popularActivity.id,
-      status,
-      score: status === "completed"
-        ? Math.floor(60 + Math.random() * 40)
-        : null,
-      completed_at:
-        status === "completed"
-          ? randomDateWithinDays(30)
-          : null
+      user_id: userId,
+      activity_id: activityId,
+      status: randomChoice(["started", "completed", "completed", "started"]),
+      score: Math.random() < 0.5 ? null : Math.floor(Math.random() * 100),
+      completed_at: randomDateWithinDays(30)
     });
   }
 
@@ -144,16 +87,19 @@ export async function seedHeavy() {
     await db("user_activities").insert(userActivities.splice(0, 200));
   }
 
+  console.log("[seed] user activities seeded");
+
   // ─────────────────────────────────────────────
-  // ACTIVITY LOGS (MESSY & REAL)
+  // ACTIVITY LOGS (realistic noise)
   // ─────────────────────────────────────────────
+  const actions = ["viewed", "started", "completed", "failed"];
   const logs = [];
 
-  for (let i = 0; i < 900; i++) {
+  for (let i = 0; i < 800; i++) {
     logs.push({
       user_id: randomChoice(users).id,
-      activity_id: randomChoice(activities).id,
-      action: randomChoice(LOG_ACTIONS),
+      activity_id: Math.floor(Math.random() * 200) + 1,
+      action: randomChoice(actions),
       metadata: JSON.stringify({
         source: randomChoice(["web", "mobile", "api"]),
         retry: Math.random() < 0.1
@@ -165,4 +111,7 @@ export async function seedHeavy() {
   while (logs.length) {
     await db("activity_logs").insert(logs.splice(0, 200));
   }
+
+  console.log("[seed] logs seeded");
+  console.log("[seed] realistic seed complete ✅");
 }

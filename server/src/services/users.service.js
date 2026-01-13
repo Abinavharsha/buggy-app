@@ -78,3 +78,15 @@ export async function getUserActivities(userId) {
 
   return results;
 }
+
+
+export async function countUsers({ status }) {
+  let query = db("users");
+
+  if (status) {
+    query = query.where({ status });
+  }
+
+  const [{ count }] = await query.count("* as count");
+  return Number(count);
+}
