@@ -25,6 +25,78 @@ initDb();
 // API logging middleware (baseline)
 app.use(apiLogger);
 
+
+// // // Buggy code with console log
+// let activeRequests = 0;
+
+// app.get("/api/heavy", async (req, res) => {
+//   activeRequests++;
+//   const start = Date.now();
+
+//   console.log(
+//     "[heavy][buggy] start | active:",
+//     activeRequests
+//   );
+
+//   // CPU-bound blocking work
+//   while (Date.now() - start < 100) {}
+
+//   activeRequests--;
+
+//   console.log(
+//     "[heavy][buggy] end | duration:",
+//     Date.now() - start,
+//     "ms | active:",
+//     activeRequests
+//   );
+
+//   res.json({ status: "ok" });
+// });
+
+
+
+
+// Fixed code with console log
+const MAX_CONCURRENT = 5;
+let activeRequests = 0;
+
+app.get("/api/heavy", async (req, res) => {
+  if (activeRequests >= MAX_CONCURRENT) {
+    console.log(
+      "[heavy][fixed] REJECTED | active:",
+      activeRequests
+    );
+
+    return res
+      .status(503)
+      .json({ error: "Server busy" });
+  }
+
+  activeRequests++;
+  const start = Date.now();
+
+  console.log(
+    "[heavy][fixed] start | active:",
+    activeRequests
+  );
+
+  while (Date.now() - start < 100) {}
+
+  activeRequests--;
+
+  console.log(
+    "[heavy][fixed] end | duration:",
+    Date.now() - start,
+    "ms | active:",
+    activeRequests
+  );
+
+  res.json({ status: "ok" });
+});
+
+
+
+
 // Health check
 app.get("/health", (req, res) => {
   res.json({ status: "ok" });
