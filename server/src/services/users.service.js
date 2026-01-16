@@ -3,23 +3,51 @@ import db from "../db/knex.js";
 /**
  * Fetch paginated users
  */
-export async function getUsers({ page, limit, status }) {
-  let query = db("users");
+// export async function getUsers({ page, limit, status }) {
+//   let query = db("users");
 
-  if (status) {
-    query = query.where({ status });
-  }
+//   if (status) {
+//     query = query.where({ status });
+//   }
 
-  // OFFSET pagination (intentional)
-  const rows = await query
-    .offset((page - 1) * limit)
-    .limit(limit);
+//   // OFFSET pagination (intentional)
+//   const rows = await query
+//     .offset((page - 1) * limit)
+//     .limit(limit);
 
-  // Attach derived data per user
+//   // Attach derived data per user
+//   const result = [];
+
+//   for (const user of rows) {
+//     // Fetch activities count per user (N+1)
+//     const activities = await db("user_activities")
+//       .where({ user_id: user.id });
+
+//     result.push({
+//       id: user.id,
+//       name: user.name,
+//       email: user.email,
+//       role: user.role,
+//       status: user.status,
+//       preferences: user.preferences,
+//       activityCount: activities.length
+//     });
+//   }
+
+//   return result;
+// }
+
+// Buggy code with Console Log
+export async function getUsers() {
+  const start = Date.now();
+
+  const users = await db("users");
+
+  console.log("[service] users fetched:", users.length);
+
   const result = [];
 
-  for (const user of rows) {
-    // Fetch activities count per user (N+1)
+  for (const user of users) {
     const activities = await db("user_activities")
       .where({ user_id: user.id });
 
@@ -29,13 +57,80 @@ export async function getUsers({ page, limit, status }) {
       email: user.email,
       role: user.role,
       status: user.status,
-      preferences: user.preferences, // rarely needed
+      preferences: user.preferences,
       activityCount: activities.length
     });
   }
 
+  console.log(
+    "[service] response object built in",
+    Date.now() - start,
+    "ms"
+  );
+
   return result;
 }
+
+// // Fixed code with console log
+// export async function getUsers() {
+//   const start = Date.now();
+
+//   const users = await db("users");
+//   const activityCounts = await db("user_activities")
+//     .select("user_id")
+//     .count("* as count")
+//     .groupBy("user_id");
+
+//   console.log(
+//     "[service][fixed] rows:",
+//     users.length,
+//     "built in",
+//     Date.now() - start,
+//     "ms"
+//   );
+
+//   const activityMap = new Map(
+//     activityCounts.map(a => [a.user_id, a.count])
+//   );
+
+//   const result = users.map(u => ({
+//     id: u.id,
+//     name: u.name,
+//     email: u.email,
+//     role: u.role,
+//     activityCount: activityMap.get(u.id) || 0
+//   }));
+
+//   console.log(
+//     "[service][fixed] payload size reduced"
+//   );
+
+//   return result;
+// }
+
+// // Fixed code without console log
+// export async function getUsers() {
+//   const users = await db("users");
+
+//   const activityCounts = await db("user_activities")
+//     .select("user_id")
+//     .count("* as count")
+//     .groupBy("user_id");
+
+//   const activityMap = new Map(
+//     activityCounts.map(a => [a.user_id, a.count])
+//   );
+
+//   return users.map(u => ({
+//     id: u.id,
+//     name: u.name,
+//     email: u.email,
+//     role: u.role,
+//     activityCount: activityMap.get(u.id) || 0
+//   }));
+// }
+
+
 
 /**
  * Fetch single user
