@@ -1,10 +1,8 @@
 import db from "../db/knex.js";
 
 export async function getActivitySummaryReport() {
-  const rows = await db("activities")
-    .select("type")
-    .count("* as count")
-    .groupBy("type");
+  const activities = await db("activities").select("id", "type");
+  const participants = await db("user_activities").select("activity_id");
 
-  return rows;
+  return { activities, participants };
 }

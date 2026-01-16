@@ -1,13 +1,28 @@
 import { getActivitySummaryReport } from "../services/reports.service.js";
 
 export async function getActivitySummary(req, res, next) {
-
   try {
-    const data = await getActivitySummaryReport();
+    const { activities, participants } =
+      await getActivitySummaryReport();
 
-    res.status(200).json({
-      data
-    });
+    const result = [];
+
+    for (const activity of activities) {
+      let count = 0;
+
+      for (const p of participants) {
+        if (p.activity_id === activity.id) {
+          count++;
+        }
+      }
+
+      result.push({
+        type: activity.type,
+        count
+      });
+    }
+
+    res.json({ data: result });
   } catch (err) {
     next(err);
   }
