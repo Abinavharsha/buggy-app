@@ -25,6 +25,80 @@ initDb();
 // API logging middleware (baseline)
 app.use(apiLogger);
 
+// // Buggy code with console log
+// let totalRequests = 0;
+
+// app.get("/api/search", async (req, res) => {
+//   totalRequests++;
+//   const start = Date.now();
+
+//   console.log(
+//     "[search][buggy] request",
+//     totalRequests
+//   );
+
+//   while (Date.now() - start < 50) {}
+
+//   res.json({ results: [] });
+// });
+
+
+
+
+// // Fixed code with console log
+const RATE_LIMIT_WINDOW_MS = 5_000; // 5 seconds
+const RATE_LIMIT_MAX = 5;           // max requests per window
+
+const rateLimitStore = new Map();
+
+app.get("/api/search", async (req, res) => {
+  const ip = req.ip;
+  const now = Date.now();
+
+  const entry =
+    rateLimitStore.get(ip) || {
+      count: 0,
+      windowStart: now
+    };
+
+  if (now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
+    console.log("[rate][fixed] reset window for", ip);
+    entry.count = 0;
+    entry.windowStart = now;
+  }
+
+  entry.count++;
+  rateLimitStore.set(ip, entry);
+
+  if (entry.count > RATE_LIMIT_MAX) {
+    console.log(
+      "[rate][fixed] REJECTED",
+      ip,
+      "count:",
+      entry.count
+    );
+
+    return res
+      .status(429)
+      .json({ error: "Too many requests" });
+  }
+
+  console.log(
+    "[rate][fixed] allowed",
+    ip,
+    "count:",
+    entry.count
+  );
+
+  const start = Date.now();
+  while (Date.now() - start < 50) {}
+
+  res.json({ results: [] });
+});
+
+
+
+
 // Health check
 app.get("/health", (req, res) => {
   res.json({ status: "ok" });
