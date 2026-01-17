@@ -5,6 +5,7 @@ import db from "../db/knex.js";
  */
 export async function getDashboardSummary(userId) {
   const rows = await db("user_activities")
+    .select("*")
     .where({ user_id: userId });
 
   let completed = 0;
