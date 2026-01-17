@@ -4,7 +4,10 @@ import db from "../db/knex.js";
  * Fetch dashboard summary counts
  */
 export async function getDashboardSummary(userId) {
+  console.log("[dashboard][summary] fetching summary for user");
   const rows = await db("user_activities")
+    // .select("*")
+    // .select("status")
     .where({ user_id: userId });
 
   let completed = 0;
