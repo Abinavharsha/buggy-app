@@ -3,25 +3,116 @@ import db from "../db/knex.js";
 /**
  * Fetch dashboard summary counts
  */
+// export async function getDashboardSummary(userId) {
+//   const rows = await db("user_activities")
+//     .select("*")
+//     .where({ user_id: userId });
+
+//   let completed = 0;
+//   let started = 0;
+
+//   for (const row of rows) {
+//     if (row.status === "completed") completed++;
+//     else started++;
+//   }
+
+//   return {
+//     total: rows.length,
+//     completed,
+//     started
+//   };
+// }
+
+// Buggy Code with console logs to trace performance
+// export async function getDashboardSummary(userId) {
+//   const start = Date.now();
+//   console.log("[dashboard][summary] js aggregation start");
+
+//   const rows = await db("user_activities")
+//     .select("status")
+//     .where({ user_id: userId });
+
+//   console.log(
+//     "[dashboard][summary] rows fetched:",
+//     rows.length,
+//     "fetch time:",
+//     Date.now() - start,
+//     "ms"
+//   );
+
+//   let completed = 0;
+//   let started = 0;
+
+//   for (const row of rows) {
+//     if (row.status === "completed") completed++;
+//     else started++;
+//   }
+
+//   console.log(
+//     "[dashboard][summary] js aggregation done in",
+//     Date.now() - start,
+//     "ms"
+//   );
+
+//   return {
+//     total: rows.length,
+//     completed,
+//     started
+//   };
+// }
+
+
+// // Fixed code with console logs
+// export async function getDashboardSummary(userId) {
+//   const start = Date.now();
+//   console.log("[dashboard][summary] sql aggregation start");
+
+//   const [{ total }] = await db("user_activities")
+//     .where({ user_id: userId })
+//     .count("* as total");
+
+//   const [{ completed }] = await db("user_activities")
+//     .where({ user_id: userId, status: "completed" })
+//     .count("* as completed");
+
+//   const [{ started }] = await db("user_activities")
+//     .where({ user_id: userId, status: "started" })
+//     .count("* as started");
+
+//   console.log(
+//     "[dashboard][summary] sql aggregation done in",
+//     Date.now() - start,
+//     "ms"
+//   );
+
+//   return {
+//     total: Number(total),
+//     completed: Number(completed),
+//     started: Number(started)
+//   };
+// }
+
+// // Fixed code without console logs
 export async function getDashboardSummary(userId) {
-  const rows = await db("user_activities")
-    .select("*")
-    .where({ user_id: userId });
+  const [{ total }] = await db("user_activities")
+    .where({ user_id: userId })
+    .count("* as total");
 
-  let completed = 0;
-  let started = 0;
+  const [{ completed }] = await db("user_activities")
+    .where({ user_id: userId, status: "completed" })
+    .count("* as completed");
 
-  for (const row of rows) {
-    if (row.status === "completed") completed++;
-    else started++;
-  }
+  const [{ started }] = await db("user_activities")
+    .where({ user_id: userId, status: "started" })
+    .count("* as started");
 
   return {
-    total: rows.length,
-    completed,
-    started
+    total: Number(total),
+    completed: Number(completed),
+    started: Number(started)
   };
 }
+
 
 /**
  * Fetch recent activities
