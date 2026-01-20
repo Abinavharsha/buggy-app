@@ -3,6 +3,10 @@ import {
   getRecentActivities,
   getActivityStats
 } from "../services/dashboard.service.js";
+import {
+  getDashboardViews,
+  recordDashboardView
+} from "../services/reports.service.js";
 
 // export async function getDashboard(req, res, next) {
 //   try {
@@ -56,6 +60,7 @@ export async function getDashboard(req, res, next) {
     const userId = Number(req.query.userId);
     const start = Date.now();
 
+<<<<<<< HEAD
     console.log("[fixed] fetching dashboard data in parallel");
 
     const [
@@ -69,6 +74,13 @@ export async function getDashboard(req, res, next) {
     ]);
 
     console.log("[fixed] total time:", Date.now() - start, "ms");
+=======
+    const summary = await getDashboardSummary(userId);
+    const activities = await getRecentActivities(userId);
+    const stats = await getActivityStats(userId);
+    recordDashboardView(userId).catch(() => { });
+    getDashboardViews(userId).catch(() => { });
+>>>>>>> 9f3e42e0d7fc6ce664461434c679e79e6e8929ad
 
     res.json({
       summary,

@@ -37,3 +37,19 @@ export async function getApiLogs({ page, limit, path, statusCode }) {
 
   return results;
 }
+
+
+export async function countLogs({ path, statusCode }) {
+  let query = db("api_logs");
+
+  if (path) {
+    query = query.where("path", "like", `%${path}%`);
+  }
+
+  if (statusCode) {
+    query = query.where({ status_code: statusCode });
+  }
+
+  const [{ count }] = await query.count("* as count");
+  return Number(count);
+}

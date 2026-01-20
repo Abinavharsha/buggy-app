@@ -1,48 +1,22 @@
 import db from "../db/knex.js";
 
-/**
- * Export activities report
- */
-export async function exportActivitiesReport({ from, to }) {
-  let query = db("user_activities");
+export async function getActivitySummaryReport() {
+  const activities = await db("activities").select("id", "type");
+  const participants = await db("user_activities").select("activity_id");
 
-  if (from) {
-    query = query.where("created_at", ">=", from);
-  }
+  return { activities, participants };
+}
 
-  if (to) {
-    query = query.where("created_at", "<=", to);
-  }
+export async function recordDashboardView(userId) {
+  await db("dashboard_views").insert({
+    user_id: userId,
+    viewed_at: new Date()
+  });
+}
 
-  // Fetch ALL matching rows (intentional)
-  const rows = await query.orderBy("created_at", "desc");
-
-  const results = [];
-
-  for (const row of rows) {
-    // Fetch user (N+1)
-    const user = await db("users")
-      .where({ id: row.user_id })
-      .first();
-
-    // Fetch activity (N+1)
-    const activity = await db("activities")
-      .where({ id: row.activity_id })
-      .first();
-
-    results.push({
-      userId: user.id,
-      userName: user.name,
-      userEmail: user.email,
-      activityId: activity.id,
-      activityTitle: activity.title,
-      activityType: activity.type,
-      status: row.status,
-      score: row.score,
-      completedAt: row.completed_at,
-      createdAt: row.created_at
-    });
-  }
-
-  return results;
+export async function getDashboardViews(userId) {
+  const rows = await db("dashboard_views")
+    .where({ user_id: userId })
+    .orderBy("viewed_at", "desc");
+  return rows;
 }

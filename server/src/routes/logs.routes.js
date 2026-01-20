@@ -1,9 +1,8 @@
 import { Router } from "express";
+import { getLogs } from "../controllers/logs.controller.js";
 
 const router = Router();
 
-router.get("/", (req, res) => {
-  res.json({ message: "Logs endpoint (placeholder)" });
-});
+router.get("/", getLogs);
 
 export default router;
