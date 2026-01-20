@@ -1,27 +1,27 @@
 import {
   listActivities,
+  countActivities,
   getActivityById,
   getActivityParticipants
 } from "../services/activities.service.js";
 
 export async function getActivities(req, res, next) {
-  const start = Date.now();
-
   try {
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 20;
     const type = req.query.type;
 
-    const activities = await listActivities({ page, limit, type });
-
-    const duration = Date.now() - start;
+    const [activities, total] = await Promise.all([
+      listActivities({ page, limit, type }),
+      countActivities({ type })
+    ]);
 
     res.status(200).json({
       data: activities,
       meta: {
         page,
         limit,
-        responseTimeMs: duration
+        total
       }
     });
   } catch (err) {

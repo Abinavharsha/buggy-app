@@ -1,32 +1,25 @@
-import { getApiLogs } from "../services/logs.service.js";
+import { getApiLogs, countLogs } from "../services/logs.service.js";
 
-export async function listApiLogs(req, res, next) {
-  const start = Date.now();
-
+export async function getLogs(req, res, next) {
   try {
     const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 50;
-    const path = req.query.path;
-    const statusCode = req.query.statusCode;
+    const limit = Number(req.query.limit) || 20;
 
-    const logs = await getApiLogs({
-      page,
-      limit,
-      path,
-      statusCode
-    });
-
-    const duration = Date.now() - start;
+    const [logs, total] = await Promise.all([
+      getApiLogs({ page, limit }),
+      countLogs({})
+    ]);
 
     res.status(200).json({
       data: logs,
       meta: {
         page,
         limit,
-        responseTimeMs: duration
+        total
       }
     });
   } catch (err) {
     next(err);
   }
 }
+

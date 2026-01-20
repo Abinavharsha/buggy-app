@@ -1,23 +1,28 @@
-import { exportActivitiesReport } from "../services/reports.service.js";
+import { getActivitySummaryReport } from "../services/reports.service.js";
 
-export async function exportReport(req, res, next) {
-  const start = Date.now();
-
+export async function getActivitySummary(req, res, next) {
   try {
-    const from = req.query.from;
-    const to = req.query.to;
+    const { activities, participants } =
+      await getActivitySummaryReport();
 
-    const data = await exportActivitiesReport({ from, to });
+    const result = [];
 
-    const duration = Date.now() - start;
+    for (const activity of activities) {
+      let count = 0;
 
-    res.status(200).json({
-      data,
-      meta: {
-        count: data.length,
-        responseTimeMs: duration
+      for (const p of participants) {
+        if (p.activity_id === activity.id) {
+          count++;
+        }
       }
-    });
+
+      result.push({
+        type: activity.type,
+        count
+      });
+    }
+
+    res.json({ data: result });
   } catch (err) {
     next(err);
   }
