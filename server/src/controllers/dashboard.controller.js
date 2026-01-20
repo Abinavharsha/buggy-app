@@ -16,7 +16,9 @@ export async function getDashboard(req, res, next) {
     const activities = await getRecentActivities(userId);
     const stats = await getActivityStats(userId);
     recordDashboardView(userId).catch(() => { });
-    getDashboardViews(userId).catch(() => { });
+    // getDashboardViews(userId).catch(() => { });
+    // Use the below for fixed
+    getDashboardViews({ userId }).catch(() => {});
 
     res.json({
       summary,
