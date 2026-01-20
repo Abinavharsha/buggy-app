@@ -81,3 +81,107 @@ export async function getActivityStats(userId) {
 
   return stats;
 }
+
+/**
+ * BAD: Over-scoped transaction
+ * Holds locks while application logic runs
+ */
+// export async function markUserActivitiesProcessed(userId) {
+//   return db.transaction(async trx => {
+//     const rows = await trx("user_activities")
+//       .where({ user_id: userId });
+
+//     // Application-side work inside transaction
+//     for (const row of rows) {
+//       await new Promise(res => setTimeout(res, 2));
+//     }
+
+//     await trx("user_activities")
+//       .where({ user_id: userId })
+//       .update({ status: "processed" });
+
+//     return { updated: rows.length };
+//   });
+// }
+
+/**
+ * BAD: Over-scoped transaction (with logs)
+ */
+// export async function markUserActivitiesProcessed(userId) {
+//   console.log("[tx][buggy] starting transaction");
+
+//   return db.transaction(async trx => {
+//     console.log("[tx][buggy] transaction opened");
+
+//     const rows = await trx("user_activities")
+//       .where({ user_id: userId });
+
+//     console.log("[tx][buggy] rows fetched:", rows.length);
+
+//     // Application-side work inside transaction
+//     for (const row of rows) {
+//       await new Promise(res => setTimeout(res, 2));
+//     }
+
+//     await trx("user_activities")
+//       .where({ user_id: userId })
+//       .update({ status: "processed" });
+
+//     console.log("[tx][buggy] update committed");
+
+//     return { updated: rows.length };
+//   });
+// }
+
+
+/**
+ * GOOD: Narrow transaction scope (with logs)
+ */
+// export async function markUserActivitiesProcessed(userId) {
+//   console.log("[tx][fixed] fetching rows outside transaction");
+
+//   const rows = await db("user_activities")
+//     .where({ user_id: userId });
+
+//   console.log("[tx][fixed] rows fetched:", rows.length);
+
+//   // Application-side work OUTSIDE transaction
+//   for (const row of rows) {
+//     await new Promise(res => setTimeout(res, 2));
+//   }
+
+//   console.log("[tx][fixed] starting transaction");
+
+//   await db.transaction(async trx => {
+//     await trx("user_activities")
+//       .where({ user_id: userId })
+//       .update({ status: "processed" });
+
+//     console.log("[tx][fixed] update committed");
+//   });
+
+//   return { updated: rows.length };
+// }
+
+
+
+/**
+ * GOOD: Narrow transaction scope
+ */
+export async function markUserActivitiesProcessed(userId) {
+  const rows = await db("user_activities")
+    .where({ user_id: userId });
+
+  // Application-side work outside transaction
+  for (const row of rows) {
+    await new Promise(res => setTimeout(res, 2));
+  }
+
+  await db.transaction(async trx => {
+    await trx("user_activities")
+      .where({ user_id: userId })
+      .update({ status: "processed" });
+  });
+
+  return { updated: rows.length };
+}

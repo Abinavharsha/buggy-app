@@ -10,7 +10,8 @@ import logsRoutes from "./routes/logs.routes.js";
 import apiLogger from "./middlewares/apiLogger.middleware.js";
 import errorMiddleware from "./middlewares/error.middleware.js";
 
-// import seedRoutes from "./routes/seed.routes.js";
+import { markUserActivitiesProcessed } from "./services/dashboard.service.js";
+
 import { initDb } from "./db/initDb.js";
 
 const app = express();
