@@ -95,7 +95,6 @@ export async function getActivitySummaryReport(
   { page = 1, limit = 100 } = {}
 ) {
   const offset = (page - 1) * limit;
-  const start = Date.now();
 
   const activities = await db("activities")
     .select("id", "type");
