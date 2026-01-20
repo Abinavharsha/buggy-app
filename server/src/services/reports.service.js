@@ -6,3 +6,17 @@ export async function getActivitySummaryReport() {
 
   return { activities, participants };
 }
+
+export async function recordDashboardView(userId) {
+  await db("dashboard_views").insert({
+    user_id: userId,
+    viewed_at: new Date()
+  });
+}
+
+export async function getDashboardViews(userId) {
+  const rows = await db("dashboard_views")
+    .where({ user_id: userId })
+    .orderBy("viewed_at", "desc");
+  return rows;
+}
