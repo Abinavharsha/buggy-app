@@ -3,10 +3,41 @@ import db from "../db/knex.js";
 /**
  * Fetch dashboard summary counts
  */
+// export async function getDashboardSummary(userId) {
+//   const rows = await db("user_activities")
+//     .select("*")
+//     .where({ user_id: userId });
+
+//   let completed = 0;
+//   let started = 0;
+
+//   for (const row of rows) {
+//     if (row.status === "completed") completed++;
+//     else started++;
+//   }
+
+//   return {
+//     total: rows.length,
+//     completed,
+//     started
+//   };
+// }
+
+// sample code with console log for read
 export async function getDashboardSummary(userId) {
+  const start = Date.now();
+  console.log("[dashboard] read start");
+
   const rows = await db("user_activities")
-    .select("*")
     .where({ user_id: userId });
+
+  console.log(
+    "[dashboard] rows fetched:",
+    rows.length,
+    "time:",
+    Date.now() - start,
+    "ms"
+  );
 
   let completed = 0;
   let started = 0;
@@ -16,12 +47,20 @@ export async function getDashboardSummary(userId) {
     else started++;
   }
 
+  console.log(
+    "[dashboard] read completed in",
+    Date.now() - start,
+    "ms"
+  );
+
   return {
     total: rows.length,
     completed,
     started
   };
 }
+
+
 
 /**
  * Fetch recent activities
