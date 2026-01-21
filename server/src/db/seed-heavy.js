@@ -1,5 +1,30 @@
 import db from "./knex.js";
 
+/**
+ * --------------------------------------------------
+ * SEED SCALE (change numbers only here)
+ * --------------------------------------------------
+ */
+const SEED_SCALE = {
+  USERS: 300,
+  ACTIVITIES: 8000,
+  USER_ACTIVITIES: 8000,
+  ACTIVITY_LOGS: 8000
+};
+
+/**
+ * One heavy user for performance labs
+ */
+const HEAVY_USER_ID = 1;
+
+/**
+ * SQLite-safe batch size
+ */
+const BATCH_SIZE = 50;
+
+/**
+ * Helpers
+ */
 function randomChoice(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
@@ -11,24 +36,26 @@ function randomDateWithinDays(days) {
 }
 
 export async function seedHeavy() {
-  console.log("[seed] seeding realistic data...");
 
   // ─────────────────────────────────────────────
-  // CLEAN TABLES
+  // CLEAN TABLES (safe order)
   // ─────────────────────────────────────────────
-  await db("activity_logs").del();
-  await db("user_activities").del();
-  await db("activities").del();
-  await db("users").del();
+  await db.transaction(async trx => {
+    await trx.raw("PRAGMA foreign_keys = OFF");
+    await trx("activity_logs").del();
+    await trx("user_activities").del();
+    await trx("activities").del();
+    await trx("users").del();
+    await trx.raw("PRAGMA foreign_keys = ON");
+  });
 
   // ─────────────────────────────────────────────
-  // USERS (realistic mix)
+  // USERS
   // ─────────────────────────────────────────────
   const users = [];
 
-  for (let i = 1; i <= 15; i++) {
+  for (let i = 1; i <= SEED_SCALE.USERS; i++) {
     users.push({
-      id: i,
       name: `User ${i}`,
       email: `user${i}@example.com`,
       role: i === 1 ? "admin" : "student",
@@ -40,65 +67,83 @@ export async function seedHeavy() {
     });
   }
 
-  await db("users").insert(users);
-  console.log("[seed] users:", users.length);
+  while (users.length) {
+    await db("users").insert(users.splice(0, BATCH_SIZE));
+  }
+  const activeUserIds = await db("users")
+    .where({ status: "active" })
+    .pluck("id");
 
   // ─────────────────────────────────────────────
-  // ACTIVITIES (uneven importance)
+  // ACTIVITIES
   // ─────────────────────────────────────────────
   const activities = [];
 
-  for (let i = 1; i <= 200; i++) {
+  for (let i = 1; i <= SEED_SCALE.ACTIVITIES; i++) {
     activities.push({
-      id: i,
       title: `Activity ${i}`,
       type: i % 4 === 0 ? "lesson" : "quiz"
     });
   }
 
-  await db("activities").insert(activities);
-  console.log("[seed] activities:", activities.length);
+  while (activities.length) {
+    await db("activities").insert(activities.splice(0, BATCH_SIZE));
+  }
+  const activityIds = await db("activities").pluck("id");
 
   // ─────────────────────────────────────────────
-  // USER ACTIVITIES (skewed participation)
+  // USER ACTIVITIES (skewed toward user 1)
   // ─────────────────────────────────────────────
   const userActivities = [];
 
-  for (let i = 0; i < 1200; i++) {
-    const userId = randomChoice(
-      users.filter(u => u.status === "active").map(u => u.id)
-    );
+  for (let i = 0; i < SEED_SCALE.USER_ACTIVITIES; i++) {
+    const userId =
+      Math.random() < 0.75
+        ? HEAVY_USER_ID
+        : randomChoice(activeUserIds);
 
     const activityId =
       Math.random() < 0.6
-        ? randomChoice([1, 2, 3, 4, 5]) // popular activities
-        : Math.floor(Math.random() * 200) + 1;
+        ? randomChoice(activityIds.slice(0, 10))
+        : randomChoice(activityIds);
+
+    const status = randomChoice([
+      "started",
+      "completed",
+      "completed",
+      "started"
+    ]);
 
     userActivities.push({
       user_id: userId,
       activity_id: activityId,
-      status: randomChoice(["started", "completed", "completed", "started"]),
+      status,
       score: Math.random() < 0.5 ? null : Math.floor(Math.random() * 100),
-      completed_at: randomDateWithinDays(30)
+      completed_at:
+        status === "completed"
+          ? randomDateWithinDays(30)
+          : null
     });
   }
 
   while (userActivities.length) {
-    await db("user_activities").insert(userActivities.splice(0, 200));
+    await db("user_activities").insert(
+      userActivities.splice(0, BATCH_SIZE)
+    );
   }
-
-  console.log("[seed] user activities seeded");
-
   // ─────────────────────────────────────────────
-  // ACTIVITY LOGS (realistic noise)
+  // ACTIVITY LOGS (skewed toward user 1)
   // ─────────────────────────────────────────────
   const actions = ["viewed", "started", "completed", "failed"];
   const logs = [];
 
-  for (let i = 0; i < 800; i++) {
+  for (let i = 0; i < SEED_SCALE.ACTIVITY_LOGS; i++) {
     logs.push({
-      user_id: randomChoice(users).id,
-      activity_id: Math.floor(Math.random() * 200) + 1,
+      user_id:
+        Math.random() < 0.75
+          ? HEAVY_USER_ID
+          : randomChoice(activeUserIds),
+      activity_id: randomChoice(activityIds),
       action: randomChoice(actions),
       metadata: JSON.stringify({
         source: randomChoice(["web", "mobile", "api"]),
@@ -109,9 +154,6 @@ export async function seedHeavy() {
   }
 
   while (logs.length) {
-    await db("activity_logs").insert(logs.splice(0, 200));
+    await db("activity_logs").insert(logs.splice(0, BATCH_SIZE));
   }
-
-  console.log("[seed] logs seeded");
-  console.log("[seed] realistic seed complete ✅");
 }
