@@ -34,7 +34,7 @@ export default function Activities() {
             <tr key={a.id}>
               <td>{a.title}</td>
               <td>{a.type}</td>
-              <td align="right">{a.participantCount}</td>
+              <td align="right">{a.participants}</td>
             </tr>
           ))}
         </tbody>

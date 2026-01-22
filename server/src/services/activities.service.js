@@ -88,3 +88,15 @@ export async function countActivities({ type }) {
   const [{ count }] = await query.count("* as count");
   return Number(count);
 }
+
+export async function getAllActivities() {
+  return db("activities as a")
+    .leftJoin("user_activities as ap", "a.id", "ap.activity_id")
+    .select(
+      "a.id",
+      "a.title",
+      "a.type"
+    )
+    .count("ap.user_id as participants")
+    .groupBy("a.id");
+}
