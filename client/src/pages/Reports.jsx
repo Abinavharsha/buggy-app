@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { fetchActivitySummaryReport } from "../api/reports.api.js";
+import StatCard from "../components/StatCard.jsx";
 
 export default function Reports() {
   const [data, setData] = useState([]);
@@ -25,33 +26,87 @@ export default function Reports() {
     }));
   }, [data]);
 
-  return (
-    <div className="page">
-      <h1>Reports</h1>
+  // Derived stats
+  const totalQuizzes =
+    summary.find((s) => s.type === "quiz")?.count || 0;
 
-      {/* Clean summary */}
-      <div style={{ marginBottom: "16px" }}>
-        <h3>Summary</h3>
-        <ul>
+  const totalLessons =
+    summary.find((s) => s.type === "lesson")?.count || 0;
+
+  const totalActivities = summary.reduce(
+    (sum, s) => sum + s.count,
+    0
+  );
+
+  return (
+    <div className="dashboard">
+      {/* Header */}
+      <div className="dashboard-header">
+        <h2>Reports</h2>
+        <p className="dashboard-subtitle">
+          Activity summary and analytics
+        </p>
+      </div>
+
+      {/* Stat cards */}
+      <div className="dashboard-stats">
+        <StatCard
+          title="Total Quizzes"
+          value={totalQuizzes}
+          variant="total"
+          icon="❓"
+        />
+
+        <StatCard
+          title="Total Lessons"
+          value={totalLessons}
+          variant="completed"
+          icon="📘"
+        />
+
+        <StatCard
+          title="Total Activities"
+          value={totalActivities}
+          variant="started"
+          icon="▶️"
+        />
+
+      </div>
+
+      {/* Activity distribution (no chart yet) */}
+      <div className="dashboard-card">
+        <h3>Activity Distribution</h3>
+        <p className="card-subtitle">
+          Breakdown of activity types
+        </p>
+
+        <ul className="activity-distribution-list">
           {summary.map((row) => (
-            <li key={row.type}>
-              <strong>{row.type}</strong> → {row.count}
+            <li key={row.type} className="distribution-row">
+              <span className="distribution-type">
+                {row.type}
+              </span>
+              <span className="distribution-count">
+                {row.count}
+              </span>
             </li>
           ))}
         </ul>
       </div>
 
-      {/* Optional teaching toggle */}
-      <button
-        onClick={() => setShowRaw((v) => !v)}
-        style={{ marginBottom: "12px" }}
-      >
-        {showRaw ? "Hide Raw Data" : "Show Raw Data"}
-      </button>
+      {/* Teaching toggle */}
+      <div style={{ marginTop: "24px" }}>
+        <button
+          className="nav-btn"
+          onClick={() => setShowRaw((v) => !v)}
+        >
+          {showRaw ? "Hide Raw Data" : "Show Raw Data"}
+        </button>
+      </div>
 
       {/* Raw backend output (for teaching) */}
       {showRaw && (
-        <>
+        <div className="dashboard-card" style={{ marginTop: "16px" }}>
           <h3>Raw Output (Buggy Backend)</h3>
           <ul style={{ maxHeight: "300px", overflowY: "auto" }}>
             {data.map((row, index) => (
@@ -60,7 +115,7 @@ export default function Reports() {
               </li>
             ))}
           </ul>
-        </>
+        </div>
       )}
     </div>
   );

@@ -17,32 +17,62 @@ export default function Users() {
   const totalPages = Math.ceil(total / limit);
 
   return (
-    <div>
-      <h1>Users</h1>
+    <div className="dashboard">
+      {/* Header */}
+      <div className="dashboard-header">
+        <h2>Users</h2>
+        <p className="dashboard-subtitle">
+          Manage and view all registered users
+        </p>
+      </div>
 
-      <ul>
-        {users.map(user => (
-          <li key={user.id}>
-            {user.name} ({user.email})
-          </li>
-        ))}
-      </ul>
+      {/* Users card */}
+      <div className="dashboard-card">
+        <ul className="users-list">
+          {users.map((user, idx) => (
+            <li key={user.id} className="users-list-item users-row">
+              <span className="users-col users-col-index">
+                {(page - 1) * limit + idx + 1}
+              </span>
 
-      <button
-        disabled={page === 1}
-        onClick={() => setPage(p => p - 1)}
-      >
-        Prev
-      </button>
+              <div className="users-col users-col-user user-left">
+                <div className="user-avatar">
+                  {user.name?.charAt(0).toUpperCase()}
+                </div>
+                <span className="user-name">{user.name}</span>
+              </div>
 
-      <span> Page {page} of {totalPages} </span>
+              <span className="users-col users-col-email user-email">
+                {user.email}
+              </span>
+            </li>
+          ))}
+        </ul>
 
-      <button
-        disabled={page >= totalPages}
-        onClick={() => setPage(p => p + 1)}
-      >
-        Next
-      </button>
+
+        {/* Pagination */}
+        <div className="users-pagination">
+          <button
+            className="nav-btn"
+            disabled={page === 1}
+            onClick={() => setPage(p => p - 1)}
+          >
+            Prev
+          </button>
+
+          <span className="pagination-text">
+            Page {page} of {totalPages}
+          </span>
+
+          <button
+            className="nav-btn"
+            disabled={page >= totalPages}
+            onClick={() => setPage(p => p + 1)}
+          >
+            Next
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

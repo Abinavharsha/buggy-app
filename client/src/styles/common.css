@@ -15,3 +15,621 @@ nav button {
 h2 {
   margin-top: 24px;
 }
+
+/* ================================
+   Dashboard Layout
+================================ */
+.dashboard {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.dashboard-header {
+  margin-bottom: 24px;
+}
+
+.dashboard-subtitle {
+  color: #64748b;
+  margin-top: 4px;
+}
+
+/* ================================
+   Stat Cards
+================================ */
+.dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+/* ================================
+   Logs / Activity
+================================ */
+.dashboard-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.activity-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.activity-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+}
+
+.activity-title {
+  display: block;
+  font-weight: 500;
+}
+
+.activity-action {
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* ================================
+   App Header
+================================ */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #ffffff;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.org-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #c7d2fe;
+  /* placeholder for image */
+}
+
+.org-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.org-name {
+  font-weight: 600;
+}
+
+.org-subtitle {
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* ================================
+   Navigation Buttons
+================================ */
+.header-nav {
+  display: flex;
+  gap: 8px;
+}
+
+.header-nav button {
+  background: transparent;
+  border: 1px solid #e2e8f0;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.header-nav button:hover {
+  background: #f1f5f9;
+}
+
+/* ================================
+   Stat Cards
+================================ */
+.stat-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.stat-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #6366f1, #22c55e);
+}
+
+/* ================================
+   Activity List (Improved)
+================================ */
+.activity-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.activity-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.activity-title {
+  font-weight: 500;
+}
+
+.activity-action {
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* ================================
+   Status Pills
+================================ */
+.activity-status {
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  text-transform: capitalize;
+  font-weight: 500;
+}
+
+.activity-status.started {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.activity-status.completed {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.activity-status.failed {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+/* ================================
+   Stat Cards (Icons & Colors)
+================================ */
+.stat-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+/* Color variants */
+.stat-total .stat-icon {
+  background: linear-gradient(135deg, #6366f1, #818cf8);
+}
+
+.stat-completed .stat-icon {
+  background: linear-gradient(135deg, #22c55e, #4ade80);
+}
+
+.stat-started .stat-icon {
+  background: linear-gradient(135deg, #f59e0b, #fbbf24);
+}
+
+/* ================================
+   Header Navigation Buttons
+================================ */
+.nav-btn {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 6px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+/* Hover */
+.nav-btn:hover {
+  background: #f1f5f9;
+}
+
+/* Active */
+.nav-btn.active {
+  background: #6366f1;
+  border-color: #6366f1;
+  color: #ffffff;
+}
+
+/* Optional subtle focus */
+.nav-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
+}
+
+/* ================================
+   Users Page (Phase 1)
+================================ */
+.users-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.users-list-item {
+  padding: 14px 0;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 14px;
+}
+
+.users-list-item:last-child {
+  border-bottom: none;
+}
+
+.users-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.pagination-text {
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* ================================
+   Users Rows – Phase 2 (Columns)
+================================ */
+.users-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.user-name {
+  font-weight: 500;
+}
+
+.user-email {
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* ================================
+   Users – Avatars (Phase 2)
+================================ */
+.user-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #e0f2fe;
+  color: #0369a1;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.user-name {
+  font-weight: 500;
+}
+
+.user-email {
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* ================================
+   Users Header Row
+================================ */
+.users-header {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+/* ================================
+   Users Columns
+================================ */
+.users-col {
+  display: flex;
+  align-items: center;
+}
+
+.users-col-index {
+  width: 40px;
+}
+
+.users-col-user {
+  flex: 1;
+  gap: 12px;
+}
+
+.users-col-email {
+  width: 260px;
+  justify-content: flex-start;
+}
+
+/* ================================
+   Users Rows Alignment
+================================ */
+.users-row {
+  display: flex;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.users-row:last-child {
+  border-bottom: none;
+}
+
+/* ================================
+   Pagination (Top + Bottom)
+================================ */
+.users-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin: 12px 0;
+}
+
+.users-pagination-top {
+  margin-bottom: 16px;
+}
+
+/* ================================
+   Activities Page
+================================ */
+.activities-header {
+  display: flex;
+  padding: 12px 0;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.activities-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.activities-row {
+  display: flex;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.activities-row:last-child {
+  border-bottom: none;
+}
+
+/* Columns */
+.activities-col-title {
+  flex: 1;
+  font-weight: 500;
+}
+
+.activities-col-type {
+  width: 140px;
+}
+
+.activities-col-participants {
+  width: 140px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: flex-start;
+}
+
+/* ================================
+   Activity Type Pills
+================================ */
+.activity-type {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  text-transform: capitalize;
+  font-weight: 500;
+  width: fit-content;
+}
+
+.activity-type.lesson {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.activity-type.quiz {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+/* Columns */
+.activities-col-title {
+  flex: 1;
+}
+
+.activities-col-type {
+  width: 140px;
+  display: flex;
+  align-items: center;
+}
+
+.activities-col-participants {
+  width: 140px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+
+/* ================================
+   Participants
+================================ */
+.participants-icon {
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* ================================
+   Reports – Distribution
+================================ */
+.activity-distribution-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.distribution-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.distribution-row:last-child {
+  border-bottom: none;
+}
+
+.distribution-type {
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.distribution-count {
+  font-weight: 600;
+}
+
+/* ================================
+   Logs Page
+================================ */
+.page-subtitle {
+  color: #64748b;
+  margin-bottom: 16px;
+}
+
+/* Logs summary */
+.logs-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #475569;
+  margin-bottom: 16px;
+}
+
+.logs-summary .dot {
+  opacity: 0.5;
+}
+
+/* Logs list */
+.logs-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Method pill */
+.log-method {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.log-method.GET {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+/* Path */
+.log-path {
+  font-family: monospace;
+  color: #0f172a;
+}
+
+/* Status code */
+.log-status {
+  font-weight: 600;
+  text-align: right;
+}
+
+.log-time {
+  text-align: right;
+  padding-left: 12px;
+  white-space: nowrap;
+}
+
+.log-status.ok {
+  color: #2563eb;
+}
+
+.log-status.error {
+  color: #dc2626;
+}
+
+/* Response time */
+.log-item {
+  display: grid;
+  grid-template-columns: 70px minmax(0, 1fr) 70px 80px;
+  align-items: center;
+  padding: 12px 12px 12px 0;
+  border-top: 1px solid #e2e8f0;
+  font-size: 14px;
+}
+
+.log-time.fast {
+  color: #16a34a;
+}
+
+.log-time.slow {
+  color: #dc2626;
+}
+
+/* ================================
+   Page Container (GLOBAL)
+================================ */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px;
+}

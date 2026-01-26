@@ -18,25 +18,61 @@ export default function Logs() {
   return (
     <div className="page">
       <h1>Logs</h1>
+      <p className="page-subtitle">
+        API request logs and response times
+      </p>
 
-      {loading && <p>Loading logs...</p>}
+      <div className="dashboard-card">
+        {/* Summary header */}
+        <div className="logs-summary">
+          <span>{logs.length} requests</span>
+          <span className="dot">•</span>
+          <span>
+            Avg response:{" "}
+            {logs.length
+              ? Math.round(
+                  logs.reduce((a, b) => a + b.responseTimeMs, 0) /
+                    logs.length
+                )
+              : 0}
+            ms
+          </span>
+        </div>
 
-      {!loading && logs.length === 0 && (
-        <p>No logs found.</p>
-      )}
+        {loading && <p>Loading logs...</p>}
 
-      {!loading && logs.length > 0 && (
-        <ul>
-          {logs.map((log) => (
-            <li key={log.id}>
-              <strong>{log.method}</strong>{" "}
-              {log.path} —{" "}
-              <strong>{log.statusCode}</strong>{" "}
-              ({log.responseTimeMs} ms)
-            </li>
-          ))}
-        </ul>
-      )}
+        {!loading && logs.length === 0 && <p>No logs found.</p>}
+
+        {!loading && logs.length > 0 && (
+          <ul className="logs-list">
+            {logs.map((log) => (
+              <li key={log.id} className="log-item">
+                <span className={`log-method ${log.method}`}>
+                  {log.method}
+                </span>
+
+                <span className="log-path">{log.path}</span>
+
+                <span
+                  className={`log-status ${
+                    log.statusCode >= 400 ? "error" : "ok"
+                  }`}
+                >
+                  {log.statusCode}
+                </span>
+
+                <span
+                  className={`log-time ${
+                    log.responseTimeMs > 800 ? "slow" : "fast"
+                  }`}
+                >
+                  {log.responseTimeMs} ms
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 }
