@@ -14,7 +14,32 @@ export default function Activities() {
     });
   }, [page]);
 
-  const totalPages = Math.ceil(total / limit);
+  // Add as this is a buggy code, for console log
+  // console.log("[Activities] rows rendered:", activities.length);
+  // const totalPages = Math.ceil(total / limit);
+
+  // Fixed code with console log
+  const PAGE_SIZE = 20;
+  const totalPages = Math.ceil(activities.length / PAGE_SIZE);
+
+  const paginatedActivities = useMemo(() => {
+    const start = (page - 1) * PAGE_SIZE;
+    return activities.slice(start, start + PAGE_SIZE);
+  }, [activities, page]);
+
+  console.log("[Activities] rows rendered:", paginatedActivities.length);
+
+
+
+  // // Fixed code without console log
+  // const PAGE_SIZE = 20;
+  // const totalPages = Math.ceil(activities.length / PAGE_SIZE);
+
+  // const paginatedActivities = useMemo(() => {
+  //   const start = (page - 1) * PAGE_SIZE;
+  //   return activities.slice(start, start + PAGE_SIZE);
+  // }, [activities, page]);
+
 
   return (
     <div className="dashboard">
@@ -37,7 +62,7 @@ export default function Activities() {
 
         {/* Rows */}
         <ul className="activities-list">
-          {activities.map(activity => (
+          {paginatedActivities.map(activity => (
             <li key={activity.id} className="activities-row">
               <span className="activities-col-title">
                 {activity.title}
