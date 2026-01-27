@@ -44,6 +44,16 @@ export default function Dashboard() {
 
   if (!data) return <p>Loading...</p>;
 
+  let completedCount = 0;
+  let startedCount = 0;
+
+  for (const activity of data.recentActivities) {
+    if (activity.action === "completed") completedCount++;
+    if (activity.action === "started") startedCount++;
+  }
+
+
+
   return (
     <div className="dashboard">
       {/* Header */}
@@ -65,14 +75,14 @@ export default function Dashboard() {
 
         <StatCard
           title="Completed"
-          value={data.summary.completed}
+          value={completedCount}
           variant="completed"
           icon={DASHBOARD_ICONS.completed}
         />
 
         <StatCard
           title="Started"
-          value={data.summary.started}
+          value={startedCount}
           variant="started"
           icon={DASHBOARD_ICONS.started}
         />
