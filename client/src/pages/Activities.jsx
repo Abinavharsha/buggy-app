@@ -6,6 +6,7 @@ export default function Activities() {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const limit = 20;
+  const MAX_DOM_ROWS = 30;
 
   useEffect(() => {
     fetchActivities(page, limit).then(res => {
@@ -14,7 +15,34 @@ export default function Activities() {
     });
   }, [page]);
 
-  const totalPages = Math.ceil(total / limit);
+  // // Buggy version console log
+  // console.log(
+  //   "[Activities][buggy] DOM rows rendered:",
+  //   activities.length
+  // );
+
+  // // Fixed code with console log
+  // const visibleActivities = useMemo(() => {
+  //   return activities.slice(0, MAX_DOM_ROWS);
+  // }, [activities]);
+
+  // console.log(
+  //   "[Activities][fixed] total data:",
+  //   activities.length
+  // );
+
+  // console.log(
+  //   "[Activities][fixed] DOM rows rendered:",
+  //   visibleActivities.length
+  // );
+
+
+  // Fixed code without console log
+  const visibleActivities = useMemo(() => {
+    return activities.slice(0, MAX_DOM_ROWS);
+  }, [activities]);
+
+  const totalPages = Math.ceil(activities.length / limit);
 
   return (
     <div className="dashboard">
@@ -37,7 +65,7 @@ export default function Activities() {
 
         {/* Rows */}
         <ul className="activities-list">
-          {activities.map(activity => (
+          {visibleActivities.map(activity => (
             <li key={activity.id} className="activities-row">
               <span className="activities-col-title">
                 {activity.title}
