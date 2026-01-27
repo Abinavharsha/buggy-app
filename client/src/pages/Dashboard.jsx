@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { fetchDashboard } from "../api/dashboard.api.js";
 import StatCard from "../components/StatCard.jsx";
 import usePolling from "../hooks/usePolling.js";
@@ -33,12 +33,73 @@ const DASHBOARD_ICONS = {
 export default function Dashboard() {
   const [data, setData] = useState(null);
 
+  // usePolling(async () => {
+  //   try {
+  //     const res = await fetchDashboard(1);
+  //     setData(res);
+  //   } catch (err) {
+  //     console.error("[dashboard] fetch failed", err);
+  //   }
+  // }, 5000);
+
+
+
+
+  // // buggy code with console log
+  // usePolling(async () => {
+  //   console.log("[Dashboard] polling backend");
+
+  //   const res = await fetchDashboard(1);
+
+  //   console.log("[Dashboard] updating state");
+  //   setData(res);
+  // }, 5000);
+
+
+
+
+  // // Fixed code with console log
+  // const lastSignatureRef = useRef(null);
+
+  // usePolling(async () => {
+  //   const res = await fetchDashboard(1);
+
+  //   const signature = JSON.stringify(res.summary);
+
+  //   if (signature !== lastSignatureRef.current) {
+  //     lastSignatureRef.current = signature;
+  //     setData(res);
+  //   }
+  // }, 5000);
+
+  // if (!data) return <p>Loading...</p>;
+
+  // let completedCount = 0;
+  // let startedCount = 0;
+
+  // for (const activity of data.recentActivities) {
+  //   if (activity.action === "completed") completedCount++;
+  //   if (activity.action === "started") startedCount++;
+  // }
+
+
+
+  // Fixed code with console log
+  const lastSignatureRef = useRef(null);
+
   usePolling(async () => {
-    try {
-      const res = await fetchDashboard(1);
+    console.log("[Dashboard] polling backend");
+
+    const res = await fetchDashboard(1);
+    const signature = JSON.stringify(res.summary);
+
+    if (signature !== lastSignatureRef.current) {
+      console.log("[Dashboard] change detected → updating UI");
+
+      lastSignatureRef.current = signature;
       setData(res);
-    } catch (err) {
-      console.error("[dashboard] fetch failed", err);
+    } else {
+      console.log("[Dashboard] no change → skipping update");
     }
   }, 5000);
 
