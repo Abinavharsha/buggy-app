@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { fetchActivities } from "../api/activities.api.js";
 
 export default function Activities() {
@@ -15,6 +15,19 @@ export default function Activities() {
   }, [page]);
 
   const totalPages = Math.ceil(total / limit);
+
+  // console.log("[Activities] render");
+  // console.log("[Activities] rendering rows:", activities.length);
+
+  const VISIBLE_ROWS = 20;
+  const visibleActivities = useMemo(() => {
+    console.log("[Activities] computing visible window");
+    return activities.slice(0, VISIBLE_ROWS);
+  }, [activities]);
+
+  // buggy code already there, to see console logs
+  console.log("[Activities] render");
+  console.log("[Activities] rendering rows:", visibleActivities.length);
 
   return (
     <div className="dashboard">
@@ -37,7 +50,13 @@ export default function Activities() {
 
         {/* Rows */}
         <ul className="activities-list">
-          {activities.map(activity => (
+          {/* buggy code */}
+          {/* {activities.map(activity => ( */}
+
+
+            
+          {/* Fixed code */}
+          {visibleActivities.map(activity => (
             <li key={activity.id} className="activities-row">
               <span className="activities-col-title">
                 {activity.title}
