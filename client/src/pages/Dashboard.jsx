@@ -36,18 +36,6 @@ export default function Dashboard() {
   usePolling(async () => {
     try {
       const res = await fetchDashboard(1);
-
-      if (
-        !res ||
-        typeof res !== "object" ||
-        !res.summary ||
-        !res.recentActivities ||
-        !res.stats
-      ) {
-        console.warn("[dashboard] invalid payload", res);
-        return;
-      }
-
       setData(res);
     } catch (err) {
       console.error("[dashboard] fetch failed", err);
