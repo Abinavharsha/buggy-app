@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { fetchDashboard } from "../api/dashboard.api.js";
 import StatCard from "../components/StatCard.jsx";
 import usePolling from "../hooks/usePolling.js";
@@ -42,7 +42,20 @@ export default function Dashboard() {
     }
   }, 5000);
 
+  // if (!data) return <p>Loading...</p>;
+
+  // let completedCount = 0;
+  // let startedCount = 0;
+
+  // for (const activity of data.recentActivities) {
+  //   if (activity.action === "completed") completedCount++;
+  //   if (activity.action === "started") startedCount++;
+  // }
+
+  // Buggy code with console log
   if (!data) return <p>Loading...</p>;
+
+  console.log("[Dashboard] computing derived stats");
 
   let completedCount = 0;
   let startedCount = 0;
@@ -52,7 +65,51 @@ export default function Dashboard() {
     if (activity.action === "started") startedCount++;
   }
 
+  // // Fixed code with console log
+  // const { completedCount, startedCount } = useMemo(() => {
+  //   console.log("[Dashboard] computing derived stats");
 
+  //   if (!data || !Array.isArray(data.recentActivities)) {
+  //     return { completedCount: 0, startedCount: 0 };
+  //   }
+
+  //   let completed = 0;
+  //   let started = 0;
+
+  //   for (const activity of data.recentActivities) {
+  //     if (activity.action === "completed") completed++;
+  //     if (activity.action === "started") started++;
+  //   }
+
+  //   return {
+  //     completedCount: completed,
+  //     startedCount: started
+  //   };
+  // }, [data]);
+  // if (!data) return <p>Loading...</p>;
+
+
+  // // Fixed code without console log
+  // const { completedCount, startedCount } = useMemo(() => {
+
+  //   if (!data || !Array.isArray(data.recentActivities)) {
+  //     return { completedCount: 0, startedCount: 0 };
+  //   }
+
+  //   let completed = 0;
+  //   let started = 0;
+
+  //   for (const activity of data.recentActivities) {
+  //     if (activity.action === "completed") completed++;
+  //     if (activity.action === "started") started++;
+  //   }
+
+  //   return {
+  //     completedCount: completed,
+  //     startedCount: started
+  //   };
+  // }, [data]);
+  // if (!data) return <p>Loading...</p>;
 
   return (
     <div className="dashboard">
