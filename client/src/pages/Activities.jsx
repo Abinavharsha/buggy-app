@@ -14,15 +14,7 @@ export default function Activities() {
     });
   }, [page]);
 
-  // Add as this is a buggy code, for console log
-  // console.log("[Activities] rows rendered:", activities.length);
-  const PAGE_SIZE = 20;
-  const totalPages = Math.ceil(activities.length / PAGE_SIZE);
-
-  const paginatedActivities = useMemo(() => {
-    const start = (page - 1) * PAGE_SIZE;
-    return activities.slice(start, start + PAGE_SIZE);
-  }, [activities, page]);
+  const totalPages = Math.ceil(total / limit);
 
   return (
     <div className="dashboard">
@@ -45,7 +37,7 @@ export default function Activities() {
 
         {/* Rows */}
         <ul className="activities-list">
-          {paginatedActivities.map(activity => (
+          {activities.map(activity => (
             <li key={activity.id} className="activities-row">
               <span className="activities-col-title">
                 {activity.title}
