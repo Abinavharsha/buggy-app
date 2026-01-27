@@ -30,19 +30,97 @@ const DASHBOARD_ICONS = {
 
 
 
+// export default function Dashboard() {
+//   const [data, setData] = useState(null);
+
+//   usePolling(async () => {
+//     try {
+//       const res = await fetchDashboard(1);
+//       setData(res);
+//     } catch (err) {
+//       console.error("[dashboard] fetch failed", err);
+//     }
+//   }, 5000);
+
+//   if (!data) return <p>Loading...</p>;
+
+//   return (
+//     <div className="dashboard">
+//       {/* Header */}
+//       <div className="dashboard-header">
+//         <h2>Dashboard</h2>
+//         <p className="dashboard-subtitle">
+//           System overview and recent activity
+//         </p>
+//       </div>
+
+//       {/* Stat cards */}
+//       <div className="dashboard-stats">
+//         <StatCard
+//           title="Total Activities"
+//           value={data.summary.total}
+//           variant="total"
+//           icon={DASHBOARD_ICONS.total}
+//         />
+
+//         <StatCard
+//           title="Completed"
+//           value={data.summary.completed}
+//           variant="completed"
+//           icon={DASHBOARD_ICONS.completed}
+//         />
+
+//         <StatCard
+//           title="Started"
+//           value={data.summary.started}
+//           variant="started"
+//           icon={DASHBOARD_ICONS.started}
+//         />
+//       </div>
+
+//       {/* Recent activity / logs */}
+//       <div className="dashboard-card">
+//         <h3>Recent Activity</h3>
+
+//         <ul className="activity-list">
+//           {data.recentActivities.map((a, i) => (
+//             <li key={i} className="activity-item">
+//               <div className="activity-left">
+//                 <div className="activity-title">{a.title}</div>
+//                 <div className="activity-action">{a.action}</div>
+//               </div>
+
+//               <span className={`activity-status ${a.action}`}>
+//                 {a.action}
+//               </span>
+//             </li>
+//           ))}
+//         </ul>
+//       </div>
+//     </div>
+//   );
+// }
+
+// Buggy code with console log
 export default function Dashboard() {
   const [data, setData] = useState(null);
 
+  console.log("[Dashboard] render");
+
   usePolling(async () => {
-    try {
-      const res = await fetchDashboard(1);
-      setData(res);
-    } catch (err) {
-      console.error("[dashboard] fetch failed", err);
-    }
+    console.log("[Dashboard] polling tick");
+
+    const res = await fetchDashboard(1);
+    console.log("[Dashboard] fetched dashboard data");
+
+    // ❌ BUG: unconditional state update
+    setData(res);
   }, 5000);
 
-  if (!data) return <p>Loading...</p>;
+  if (!data) {
+    console.log("[Dashboard] loading");
+    return <p>Loading...</p>;
+  }
 
   return (
     <div className="dashboard">

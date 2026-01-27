@@ -32,7 +32,79 @@ const ICONS = {
   )
 };
 
-export default function StatCard({ title, value, variant = "total", icon }) {
+// export default function StatCard({ title, value, variant = "total", icon }) {
+//   return (
+//     <div className={`stat-card stat-${variant}`}>
+//       <div>
+//         <div className="stat-title">{title}</div>
+//         <div className="stat-value">{value}</div>
+//       </div>
+
+//       <div className="stat-icon">
+//         {icon}
+//       </div>
+//     </div>
+//   );
+// }
+
+// // buggy code with console log
+// export default function StatCard({ title, value, variant = "total", icon }) {
+//   console.log(`[StatCard] render → ${title}`);
+
+//   return (
+//     <div className={`stat-card stat-${variant}`}>
+//       <div>
+//         <div className="stat-title">{title}</div>
+//         <div className="stat-value">{value}</div>
+//       </div>
+
+//       <div className="stat-icon">
+//         {icon}
+//       </div>
+//     </div>
+//   );
+// }
+
+
+
+// // Fixed code with console log
+// import React from "react";
+
+// const StatCard = React.memo(function StatCard({
+//   title,
+//   value,
+//   variant = "total",
+//   icon
+// }) {
+//   console.log(`[StatCard] render → ${title}`);
+
+//   return (
+//     <div className={`stat-card stat-${variant}`}>
+//       <div>
+//         <div className="stat-title">{title}</div>
+//         <div className="stat-value">{value}</div>
+//       </div>
+
+//       <div className="stat-icon">
+//         {icon}
+//       </div>
+//     </div>
+//   );
+// });
+
+// export default StatCard;
+
+
+// Fixed code without console log
+import React from "react";
+
+const StatCard = React.memo(function StatCard({
+  title,
+  value,
+  variant = "total",
+  icon
+}) {
+
   return (
     <div className={`stat-card stat-${variant}`}>
       <div>
@@ -45,5 +117,6 @@ export default function StatCard({ title, value, variant = "total", icon }) {
       </div>
     </div>
   );
-}
+});
 
+export default StatCard;
