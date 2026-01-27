@@ -1,4 +1,4 @@
-import { useState, useMemo,lazy, Suspense } from "react";
+import { useState, useMemo, lazy, Suspense } from "react";
 import { fetchDashboard } from "../api/dashboard.api.js";
 import StatCard from "../components/StatCard.jsx";
 import usePolling from "../hooks/usePolling.js";
@@ -27,6 +27,32 @@ const DASHBOARD_ICONS = {
     </svg>
   )
 };
+
+// For fixed, please add the below function
+function RecentActivity({ activities }) {
+  return (
+    <div className="dashboard-card">
+      <h3>Recent Activity</h3>
+      <ul className="activity-list">
+        {activities.map((a, i) => (
+          <li key={i} className="activity-item">
+            <div className="activity-left">
+              <div className="activity-title">{a.title}</div>
+              <div className="activity-action">{a.action}</div>
+            </div>
+            <span className={`activity-status ${a.action}`}>
+              {a.action}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+
+}/* Lazy wrapper */
+const LazyRecentActivity = lazy(() =>
+  Promise.resolve({ default: RecentActivity })
+);
 
 
 
@@ -88,25 +114,9 @@ export default function Dashboard() {
         />
       </div>
 
-      {/* Recent activity / logs */}
-      <div className="dashboard-card">
-        <h3>Recent Activity</h3>
-
-        <ul className="activity-list">
-          {data.recentActivities.map((a, i) => (
-            <li key={i} className="activity-item">
-              <div className="activity-left">
-                <div className="activity-title">{a.title}</div>
-                <div className="activity-action">{a.action}</div>
-              </div>
-
-              <span className={`activity-status ${a.action}`}>
-                {a.action}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <Suspense fallback={<p>Loading recent activity…</p>}>
+        <LazyRecentActivity activities={data.recentActivities} />
+      </Suspense>
     </div>
   );
 }
