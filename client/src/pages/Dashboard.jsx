@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { fetchDashboard } from "../api/dashboard.api.js";
 import StatCard from "../components/StatCard.jsx";
 import usePolling from "../hooks/usePolling.js";

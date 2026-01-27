@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { fetchActivities } from "../api/activities.api.js";
 
 export default function Activities() {
